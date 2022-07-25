@@ -53,11 +53,11 @@ With the `config/` dir generated let's now run CI generation:
 This should create two things:
 - a dir named `ci`
 - a yml file named `pipeline.yml`
+
 What it did was it generated a multiple Concourse `jobs` that all call the same `task` which just executes `cf-mgmt` with correct input of parameters regarding what resource needs to be modified on CloudFoundry side.
 
-Note: vars.yml client_id, client_secret, may create additional one instead of re-using cf_mgmt_client
-
 **Add config/vars.yml to .gitignore**
+
 It should not be pushed to the remote repository (or it can if you don't have plain text passwords in it ;-) )
 
 Example `config/vars.yml`
