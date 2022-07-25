@@ -1,4 +1,4 @@
-org: cf-mgmt-space
+org: cf-mgmt-org
 space: cf-mgmt-space
 space-developer:
   ldap_users: []
