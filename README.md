@@ -128,3 +128,18 @@ You should see output similar to this one:
 ```log
 2022/07/25 12:38:50 I0725 12:38:50.904103 1786254 users.go:267] [dry-run]: Add User test to role manager for org cf-mgmt-org
 ```
+And from the `cf cli`:
+```bash
+> cf org-users cf-mgmt-org
+Getting users in org cf-mgmt-org as admin...
+
+ORG MANAGER
+  admin
+  test
+
+BILLING MANAGER
+  No BILLING MANAGER found
+
+ORG AUDITOR
+  No ORG AUDITOR found
+```
