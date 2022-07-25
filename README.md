@@ -266,10 +266,12 @@ Update the `config/cf-mgmt-org/cf-mgmt-space/spaceConfig.yml`
 ```
 And global config file `config/cf-mgmt.yml`:
 ```diff
+-enable-unassign-security-groups: false
++enable-unassign-security-groups: true # !!change it only if all ASGs are controlled by cf-mgmt!!
+(...)
 staging-security-groups:
  - public_networks
  - dns
-+ - cf-mgmt-asg
 + - private_networks
 ```
 
