@@ -92,11 +92,18 @@ ldap_user: ""
 ldap_password: ""
 ```
 
+### Extending configuration
+To extend or modify current configuration please use `./cf-mgmt-config` CLI or do it directly by modifying and creating files.\
+`./cf-mgmt-config` is mostly generating new yml files with some templates in them so it may be useful at the beginning.
+
 ### Testing
 Manually executed set of tests that can be also useful for learning cf-mgmt
 
+
+
 #### Create org and space
 To create a new org and space just copy a template of existing one and modify it to your needs.\
+Or run new init via `./cf-mgmt-config add-org --org test`.\
 For the sake of this testing/tutorial we assume `cf-mgmt-org` exists with space `cf-mgmt-space` in it.\
 Take a look here for example: https://github.com/starkandwayne/demo-cf-mgmt-deployments/tree/main/config/cf-mgmt-org
 
