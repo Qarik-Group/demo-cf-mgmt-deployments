@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+LOG_LEVEL=INFO ./cf-mgmt "$@"\
+  --system-domain=system.codex.starkandwayne.com\
+  --user-id=cf_mgmt_client\
+  --client-secret=$(credhub g -n /dev-bosh/dev-cf/cf_mgmt_client_secret | sed -n 's/value: //p')\
+
+### Examples:
+# Main usage should include --peek. Concourse Pipeline should be used to apply
+# ./local-cf-mgmt create-orgs --peek # ==> to check what orgs and how they will be created
