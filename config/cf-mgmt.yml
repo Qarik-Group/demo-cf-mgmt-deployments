@@ -9,6 +9,8 @@ staging-security-groups:
 shared-domains:
   apps.codex.starkandwayne.com:
     internal: false
+  test.internal:
+    interna: true
   apps.internal:
     internal: true
   tcp2.apps.codex.starkandwayne.com:
