@@ -101,6 +101,7 @@ For the sake of this testing/tutorial we assume `cf-mgmt-org` exists with space 
 Take a look here for example: https://github.com/starkandwayne/demo-cf-mgmt-deployments/tree/main/config/cf-mgmt-org
 
 #### Create user in org/space
+Same steps are for org or space, just modify space config vs org config ;-)\
 First we need to create a new user in UAA or have connected LDAP.\
 If you are using LDAP, just configure user in `ldap.yml` as docs says.\
 
@@ -142,4 +143,43 @@ BILLING MANAGER
 
 ORG AUDITOR
   No ORG AUDITOR found
+```
+
+#### Create quotas and bind it to org/space
+Same steps are for org or space, just modify space config vs org config ;-)
+
+Let's start with creating new quota. If you want to use existing one, just skip this step.
+
+Create new file under `config/org_quotas/` named `cf-mgmt-quota.yml` and copy `default` quota configuration to it.
+```bash
+cat default.yml > cf-mgmt-quota.yml
+```
+Modify config:
+```diff
+total_private_domains: unlimited
+total_reserved_route_ports: "100"
+total_service_keys: unlimited
+-app_instance_limit: unlimited
++app_instance_limit: 10
+app_task_limit: unlimited
+-memory-limit: 100G
++memory-limit: 20G
+instance-memory-limit: unlimited
+-total-routes: "1000"
++total-routes: "100"
+total-services: unlimited
+paid-service-plans-allowed: true
+```
+
+Now use this quota in `cf-mgmt-org`, modify `config/cf-mgmt-org/orgConfig.yml`:
+```diff
+-named_quota: default
++named_quota: cf-mgmt-quota
+```
+
+Let's test that new quota:
+```log
+> ./local-cf-mgmt update-org-quotas --peek
+2022/07/25 13:16:47 I0725 13:16:47.884558 1837380 quota.go:419] [dry-run]: create org quota cf-mgmt-quota
+2022/07/25 13:16:47 I0725 13:16:47.924608 1837380 quota.go:443] [dry-run]: assign quota dry-run-quota to org cf-mgmt-org
 ```

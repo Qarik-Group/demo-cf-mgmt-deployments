@@ -24,5 +24,5 @@ enable-org-quota: false
 paid-service-plans-allowed: false
 enable-remove-users: false
 default_isolation_segment: ""
-named_quota: default
+named_quota: cf-mgmt-quota
 metadata: null
