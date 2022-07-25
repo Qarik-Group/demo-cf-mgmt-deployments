@@ -183,3 +183,10 @@ Let's test that new quota:
 2022/07/25 13:16:47 I0725 13:16:47.884558 1837380 quota.go:419] [dry-run]: create org quota cf-mgmt-quota
 2022/07/25 13:16:47 I0725 13:16:47.924608 1837380 quota.go:443] [dry-run]: assign quota dry-run-quota to org cf-mgmt-org
 ```
+
+Verify the quota is applied:
+```bash
+cf quotas
+cf org cf-mgmt-org
+```
+Should show new quota, it params, and that it is now used by `cf-mgmt-org`.
