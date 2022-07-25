@@ -22,7 +22,7 @@ space-supporter:
   ldap_groups: []
 allow-ssh: true
 enable-space-quota: false
-enable-security-group: true
+enable-security-group: false
 enable-unassign-security-group: true
 enable-remove-users: false
 isolation_segment: ""
