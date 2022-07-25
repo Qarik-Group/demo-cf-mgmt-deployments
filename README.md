@@ -2,7 +2,7 @@
 Demo repository that holds config and CI configuration for an CloudFoundry deployment that uses cf-mgmt to configure itself.
 
 ## Setup
-#### Setup cf-mgmt UAA client, put the content into your cf-genesis-kit/ops/*.yml
+### Setup cf-mgmt UAA client, put the content into your cf-genesis-kit/ops/*.yml
 ```yaml
 instance_groups:
 - name: uaa
@@ -24,7 +24,7 @@ variables:
   type: password
 ```
 
-#### Get cf-mgmt CLI tools:
+### Get cf-mgmt CLI tools:
 ```bash
 wget https://github.com/vmware-tanzu-labs/cf-mgmt/releases/download/v1.0.52/cf-mgmt-linux
 wget https://github.com/vmware-tanzu-labs/cf-mgmt/releases/download/v1.0.52/cf-mgmt-config-linux
@@ -34,7 +34,7 @@ mv cf-mgmt-config-linux cf-mgmt-config
 ```
 You may want to move those binaries somewhere else and alias them under you bash/zsh/any-sh profiles, but usually the range of use is unitary.
 
-#### Export configuration, or initialise new one.
+### Export configuration, or initialise new one.
 Initialisation should happen only if you are connecting cf-mgmt configuration to a brand new CF deployment. If there are Orgs/Spaces/Quotas/ASG's etc already setup you may want to export it instead of overriding.
 
 From this repository root run:
@@ -45,7 +45,7 @@ export-config documentation: https://github.com/vmware-tanzu-labs/cf-mgmt/blob/m
 
 This should create a new directory called `config` at the top level. 
 
-#### Concourse Pipeline generation
+### Concourse Pipeline generation
 With the `config/` dir generated let's now run CI generation:
 ```bash
 ./cf-mgmt-config generate-concourse-pipeline
@@ -90,4 +90,41 @@ ldap_user: ""
 
 # password to bind to ldap - only needed if using LDAP
 ldap_password: ""
+```
+
+### Testing
+Manually executed set of tests that can be also useful for learning cf-mgmt
+
+#### Create org and space
+To create a new org and space just copy a template of existing one and modify it to your needs.\
+For the sake of this testing/tutorial we assume `cf-mgmt-org` exists with space `cf-mgmt-space` in it.\
+Take a look here for example: https://github.com/starkandwayne/demo-cf-mgmt-deployments/tree/main/config/cf-mgmt-org
+
+#### Create user in org/space
+First we need to create a new user in UAA or have connected LDAP.\
+If you are using LDAP, just configure user in `ldap.yml` as docs says.\
+
+Create user:
+```bash
+uaac user add test --emails "test@test" --password test
+uaac member add scim.read test
+uaac member add clients.read test
+```
+
+Let's now add it under our `cf-mgmt-org`, modify `config/cf-mgmt-org/orgConfig.yml`:
+```diff
+org-manager:
+  ldap_users: []
+  users:
+  - admin
++ - test
+```
+
+Execute a dry run:
+```bash
+./local-cf-mgmt update-org-users --peek
+```
+You should see output similar to this one:
+```log
+2022/07/25 12:38:50 I0725 12:38:50.904103 1786254 users.go:267] [dry-run]: Add User test to role manager for org cf-mgmt-org
 ```

@@ -8,6 +8,7 @@ org-manager:
   ldap_users: []
   users:
   - admin
+  - test
   saml_users: []
   ldap_groups: []
 org-auditor:
