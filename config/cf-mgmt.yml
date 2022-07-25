@@ -6,6 +6,7 @@ running-security-groups:
 staging-security-groups:
 - public_networks
 - dns
+- cf-mgmt-asg
 shared-domains:
   apps.codex.starkandwayne.com:
     internal: false

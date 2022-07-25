@@ -190,3 +190,105 @@ cf quotas
 cf org cf-mgmt-org
 ```
 Should show new quota, it params, and that it is now used by `cf-mgmt-org`.
+
+#### Create ASG's
+There are two types of ASG's: default ones and all others ;-)\
+Each ASG is applied during `runtime`, `staging` or for both.\
+Let's go first and create a new `default` ASG, `default` ones applies to both `staging` and `runtime` and are not scoped - they apply to entire CF deployment.
+
+Under `config/defaults_asgs/` create new file called `private_networks.json` with a content:
+```json
+[
+  {
+    "protocol": "tcp",
+    "destination": "10.0.0.0-10.255.255.255",
+    "ports": "443"
+  },
+  {
+    "protocol": "tcp",
+    "destination": "172.16.0.0-172.31.255.255",
+    "ports": "443"
+  },
+  {
+    "protocol": "tcp",
+    "destination": "192.168.0.0-192.168.255.255",
+    "ports": "443"
+  }
+]
+```
+And let's see if that applies:
+```bash
+> ./local-cf-mgmt create-security-groups --peek
+2022/07/25 13:40:30 I0725 13:40:30.85259 1868840 securitygroup.go:332] [dry-run]: creating securityGroup private_networks with contents [
+  {
+    "protocol": "tcp",
+    "destination": "10.0.0.0-10.255.255.255",
+    "ports": "443"
+  },
+  {
+    "protocol": "tcp",
+    "destination": "172.16.0.0-172.31.255.255",
+    "ports": "443"
+  },
+  {
+    "protocol": "tcp",
+    "destination": "192.168.0.0-192.168.255.255",
+    "ports": "443"
+  }
+]
+```
+
+Let's go ahead now and actually create the **global** ASG for our space `cf-mgmt-space`.\
+Under `config/asgs/` create new file called `cf-mgmt-asg.json` with a content:
+```json
+[
+	{
+		"protocol": "tcp",
+		"ports": "7007,7008",
+		"destination": "0.0.0.0/0",
+		"code": 0,
+		"type": 0
+	}
+]
+```
+Update the `config/cf-mgmt-org/cf-mgmt-space/spaceConfig.yml`
+```diff
+-enable-security-group: false
++enable-security-group: true
+(...)
+-named-security-groups: []
++named-security-groups: [cf-mgmt-asg]
+```
+And global config file `config/cf-mgmt.yml`:
+```diff
+staging-security-groups:
+- public_networks
+- dns
++- cf-mgmt-asg
+```
+
+Let's test if it works:
+```bash
+> ./local-cf-mgmt create-security-groups --peek
+2022/07/25 13:48:08 I0725 13:48:08.896168 1878661 securitygroup.go:332] [dry-run]: creating securityGroup cf-mgmt-asg with contents [
+        {
+                "protocol": "tcp",
+                "ports": "7007,7008",
+                "destination": "0.0.0.0/0",
+                "code": 0,
+                "type": 0
+        }
+]
+```
+```bash
+> ./local-cf-mgmt update-space-security-groups --peek
+
+```
+
+If we want to only create a security group for specific space and not actually share it globally there is a way.\
+Under `config/cf-mgmt-org/cf-mgmt-space/security-group.json` add a new security group.\
+Then we need to enable this ASG create mode by turning this flag under `spaceConfig.yml`:
+```diff
+-enable-security-group: false
++enable-security-group: true
+```
