@@ -4,9 +4,12 @@ running-security-groups:
 - public_networks
 - dns
 - cf-mgmt-asg
+- private_networks
 staging-security-groups:
 - public_networks
 - dns
+- cf-mgmt-asg
+- private_networks
 shared-domains:
   apps.codex.starkandwayne.com:
     internal: false

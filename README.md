@@ -99,8 +99,6 @@ To extend or modify current configuration please use `./cf-mgmt-config` CLI or d
 ### Testing
 Manually executed set of tests that can be also useful for learning cf-mgmt
 
-
-
 #### Create org and space
 To create a new org and space just copy a template of existing one and modify it to your needs.\
 Or run new init via `./cf-mgmt-config add-org --org test`.\
@@ -269,9 +267,10 @@ Update the `config/cf-mgmt-org/cf-mgmt-space/spaceConfig.yml`
 And global config file `config/cf-mgmt.yml`:
 ```diff
 staging-security-groups:
-- public_networks
-- dns
-+- cf-mgmt-asg
+ - public_networks
+ - dns
++ - cf-mgmt-asg
++ - private_networks
 ```
 
 Let's test if it works:
