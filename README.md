@@ -300,3 +300,42 @@ Then we need to enable this ASG create mode by turning this flag under `spaceCon
 -enable-security-group: false
 +enable-security-group: true
 ```
+
+#### Create and enable isolation segments
+Isolation segments needs to be first installed by platform engineering team.\
+Make sure the CF-Genesis-Kit has feature flag `isolation-segments` enabled, and that the `params:` section include the configuration of isolation segments.\
+Use the names from kit `params:` to refer isolation segment.\
+Example `cf-genesis-kit` configuration (available since `v2.2.1-rc.1` kit version):
+```yaml
+params:
+  base_domain: cf.testing.example
+  isolation_segments:
+  - name: custom-params-group
+    azs:
+    - custom-az
+    instances: 5
+    vm_type: small-highmem
+    network_name: ((cf_runtime_network))
+    stemcell: test
+    vm_extensions:
+    - 100GB_ephemeral_disk
+    - cf-router-network-properties
+  - name: default-params-group
+    azs:
+    - z1 
+```
+To use `default-params-group` or `custom-params-group` segments created by above configuration we only need to edit config in `orgConfig.yml` or `spaceConfig.yml` and include them under `default_isolation_segment` / `isolation_segment` respectively.\
+There is no command under `cf-mgmt-config` to add those.
+
+**NOTE: The CloudFoundry never verifies if underlying infrastructure for Isolation Segments exists when performing cf/api operations. Meaning that you can create segments via cf CLI and enable them, without actual VMs running through BOSH. Please verify with platform engineering team if there are problems with isolation segments.**
+
+Let's test it:
+```bash
+> ./local-cf-mgmt isolation-segments --peek
+2022/07/26 11:48:37 I0726 11:48:37.47125 3496941 isolation_segment.go:386] create segment test
+2022/07/26 11:48:37 I0726 11:48:37.784086 3496941 isolation_segment.go:411] entitle org 23e733ec-857b-4cfe-8986-6a6536807d81 to iso segment test
+2022/07/26 11:48:38 I0726 11:48:38.302575 3496941 isolation_segment.go:362] set isolation segment for space cf-mgmt-space to test (org cf-mgmt-org)
+```
+
+If you would like to remove isolation segments when no longer used, not only "unbind" them from org or space, please switch the flag for `enable-delete-isolation-segments` in `cf-mgmt.yml`.
+
