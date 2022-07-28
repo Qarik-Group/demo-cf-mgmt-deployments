@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+## Usage: [script] [env]
+## Examp: ./export-config.sh dev
 
 if credhub f | grep cf_mgmt_client_secret; then
     echo "cf_mgmt_client_secret present!"
@@ -10,6 +12,9 @@ else
 fi
 
 ./cf-mgmt export-config\
+  --config-dir="ci/config/$1"\
   --system-domain=system.codex.starkandwayne.com\
   --user-id=cf_mgmt_client\
   --client-secret=$(credhub g -n /dev-bosh/dev-cf/cf_mgmt_client_secret | sed -n 's/value: //p')
+
+./cf-mgmt-config generate-concourse-pipeline --config-dir="ci/config/$1"

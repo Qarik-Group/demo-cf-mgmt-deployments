@@ -28,7 +28,7 @@ enable-security-group: false
 enable-unassign-security-group: true
 enable-remove-users: false
 isolation_segment: ""
-named-security-groups: 
+named-security-groups:
 - cf-mgmt-asg
 paid-service-plans-allowed: false
 named_quota: ""

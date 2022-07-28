@@ -1,7 +1,7 @@
 total_private_domains: unlimited
 total_reserved_route_ports: "100"
 total_service_keys: unlimited
-app_instance_limit: 20
+app_instance_limit: "20"
 app_task_limit: unlimited
 memory-limit: 10G
 instance-memory-limit: unlimited
