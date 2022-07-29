@@ -18,26 +18,30 @@ do
     # replace all config-repo for name/input/get
   sed -i "s/\<get: config-repo\>/get: $var-config-repo/g" pipeline-$var-genesis.yml
   sed -i "s/\<get: time-trigger\>/get: $var-time-trigger/g" pipeline-$var-genesis.yml
-  #todo: replace passed: arg
-  #sed -i "s/\<>/"
-    cat <<BANNER >> pipeline-genesis.yml
+  cat <<BANNER >> pipeline-genesis.yml
 #############################################
 #### $var cf-mgmt pipeline configuration
 #############################################
 BANNER
-  cat pipeline-$var-genesis.yml >> pipeline-genesis.yml
   echo "#PIPELINE# [DONE] Generating for $var"
-  echo "#GROUP# [START] Creating groups for $var"
-  
-cat<<GROUP >> pipeline-genesis.yml
-#### group for $var
-groups:
-- ((append))
-- name: $var-platform-management
-  jobs:
-$(grep "name: $var-" pipeline-genesis.yml | sed "s/- name: /  - /g" | sed -e "1,2d")
-GROUP
-  echo "#GROUP# [DONE] Adding jobs for $var"
+
+###TODO: Convert generated pipeline to genesis likeness
+### - flatten jobs to tasks only
+### - add input_mapping for each task
+### - general replace names
+  #echo "# Converting jobs to tasks for $var"
+  #
+  #sed -i "s/\jobs:(\s|.*)*//g" pipeline-$var-genesis.yml
+#   cat <<JOB >> pipeline-$var-genesis.yml
+# jobs:
+# - name: $var-create-orgs
+#   plan:
+#   - get: $var-config-repo
+#     trigger: true
+# https://regex101.com/r/bTPfqF/1
+# grep -zoP "task:[\S\s]+?(?:()[\S\s]+?)?CF_MGMT_COMMAND:[ a-z -]*" pipeline-dev-genesis.yml
+# JOB
+  cat pipeline-$var-genesis.yml >> pipeline-genesis.yml
   rm pipeline-$var-genesis.yml
 done
 
